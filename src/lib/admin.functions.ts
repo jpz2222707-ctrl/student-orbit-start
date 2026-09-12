@@ -17,16 +17,22 @@ const setRolesSchema = z.object({
   roles: z.array(z.enum(ROLES)),
 });
 
-/** Verifica en el servidor que quien llama tenga rol de administrador. */
-async function assertAdmin(context: { supabase: ReturnType<typeof Object>; userId: string }) {
-  const client = context.supabase as {
-    rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
-  };
-  const { data, error } = await client.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error || data !== true) throw new Error("Acción permitida solo a administradores");
+/**
+ * Verifica en el servidor que quien llama tenga rol de administrador.
+ * La consulta se hace con el cliente del usuario, así que las reglas de la
+ * base de datos también aplican.
+ */
+async function assertAdmin(context: {
+  supabase: SupabaseClient<Database>;
+  userId: string;
+}): Promise<void> {
+  const { data, error } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (error || !data) throw new Error("Acción permitida solo a administradores");
 }
 
 /** Crea una cuenta de acceso y le asigna roles. Solo administradores. */
