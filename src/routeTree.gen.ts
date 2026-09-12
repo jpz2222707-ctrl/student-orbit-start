@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ContactoRouteImport } from './routes/contacto'
+import { Route as EventosRouteImport } from './routes/eventos'
+import { Route as NosotrosRouteImport } from './routes/nosotros'
+import { Route as NoticiasRouteImport } from './routes/noticias'
+import { Route as OfertaAcademicaRouteImport } from './routes/oferta-academica'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactoRoute = ContactoRouteImport.update({
+  id: '/contacto',
+  path: '/contacto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosRoute = EventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NosotrosRoute = NosotrosRouteImport.update({
+  id: '/nosotros',
+  path: '/nosotros',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasRoute = NoticiasRouteImport.update({
+  id: '/noticias',
+  path: '/noticias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfertaAcademicaRoute = OfertaAcademicaRouteImport.update({
+  id: '/oferta-academica',
+  path: '/oferta-academica',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/eventos': typeof EventosRoute
+  '/nosotros': typeof NosotrosRoute
+  '/noticias': typeof NoticiasRoute
+  '/oferta-academica': typeof OfertaAcademicaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/eventos': typeof EventosRoute
+  '/nosotros': typeof NosotrosRoute
+  '/noticias': typeof NoticiasRoute
+  '/oferta-academica': typeof OfertaAcademicaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/eventos': typeof EventosRoute
+  '/nosotros': typeof NosotrosRoute
+  '/noticias': typeof NoticiasRoute
+  '/oferta-academica': typeof OfertaAcademicaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/contacto'
+    | '/eventos'
+    | '/nosotros'
+    | '/noticias'
+    | '/oferta-academica'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/contacto'
+    | '/eventos'
+    | '/nosotros'
+    | '/noticias'
+    | '/oferta-academica'
+  id:
+    | '__root__'
+    | '/'
+    | '/contacto'
+    | '/eventos'
+    | '/nosotros'
+    | '/noticias'
+    | '/oferta-academica'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactoRoute: typeof ContactoRoute
+  EventosRoute: typeof EventosRoute
+  NosotrosRoute: typeof NosotrosRoute
+  NoticiasRoute: typeof NoticiasRoute
+  OfertaAcademicaRoute: typeof OfertaAcademicaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +117,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contacto': {
+      id: '/contacto'
+      path: '/contacto'
+      fullPath: '/contacto'
+      preLoaderRoute: typeof ContactoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos': {
+      id: '/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof EventosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nosotros': {
+      id: '/nosotros'
+      path: '/nosotros'
+      fullPath: '/nosotros'
+      preLoaderRoute: typeof NosotrosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticias': {
+      id: '/noticias'
+      path: '/noticias'
+      fullPath: '/noticias'
+      preLoaderRoute: typeof NoticiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oferta-academica': {
+      id: '/oferta-academica'
+      path: '/oferta-academica'
+      fullPath: '/oferta-academica'
+      preLoaderRoute: typeof OfertaAcademicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactoRoute: ContactoRoute,
+  EventosRoute: EventosRoute,
+  NosotrosRoute: NosotrosRoute,
+  NoticiasRoute: NoticiasRoute,
+  OfertaAcademicaRoute: OfertaAcademicaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
