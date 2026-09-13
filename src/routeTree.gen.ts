@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as NosotrosRouteImport } from './routes/nosotros'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OfertaAcademicaRouteImport } from './routes/oferta-academica'
+import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactoRoute = ContactoRouteImport.update({
@@ -46,66 +53,85 @@ const OfertaAcademicaRoute = OfertaAcademicaRouteImport.update({
   path: '/oferta-academica',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
+  id: '/restablecer-contrasena',
+  path: '/restablecer-contrasena',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
   id:
     | '__root__'
     | '/'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
   EventosRoute: typeof EventosRoute
   NosotrosRoute: typeof NosotrosRoute
   NoticiasRoute: typeof NoticiasRoute
   OfertaAcademicaRoute: typeof OfertaAcademicaRoute
+  RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contacto': {
@@ -152,16 +185,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfertaAcademicaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/restablecer-contrasena': {
+      id: '/restablecer-contrasena'
+      path: '/restablecer-contrasena'
+      fullPath: '/restablecer-contrasena'
+      preLoaderRoute: typeof RestablecerContrasenaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,
   EventosRoute: EventosRoute,
   NosotrosRoute: NosotrosRoute,
   NoticiasRoute: NoticiasRoute,
   OfertaAcademicaRoute: OfertaAcademicaRoute,
+  RestablecerContrasenaRoute: RestablecerContrasenaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
