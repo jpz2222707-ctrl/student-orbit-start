@@ -10,15 +10,33 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as NosotrosRouteImport } from './routes/nosotros'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as OfertaAcademicaRouteImport } from './routes/oferta-academica'
+import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
+import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
+import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
+import { Route as AuthenticatedPanelAcademicoRouteImport } from './routes/_authenticated/panel.academico'
+import { Route as AuthenticatedPanelCursosRouteImport } from './routes/_authenticated/panel.cursos'
+import { Route as AuthenticatedPanelDocentesRouteImport } from './routes/_authenticated/panel.docentes'
+import { Route as AuthenticatedPanelEstudiantesRouteImport } from './routes/_authenticated/panel.estudiantes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactoRoute = ContactoRouteImport.update({
@@ -46,66 +64,156 @@ const OfertaAcademicaRoute = OfertaAcademicaRouteImport.update({
   path: '/oferta-academica',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
+  id: '/restablecer-contrasena',
+  path: '/restablecer-contrasena',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
+  id: '/panel',
+  path: '/panel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPanelIndexRoute = AuthenticatedPanelIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedPanelRoute,
+} as any)
+const AuthenticatedPanelAcademicoRoute =
+  AuthenticatedPanelAcademicoRouteImport.update({
+    id: '/academico',
+    path: '/academico',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelCursosRoute =
+  AuthenticatedPanelCursosRouteImport.update({
+    id: '/cursos',
+    path: '/cursos',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelDocentesRoute =
+  AuthenticatedPanelDocentesRouteImport.update({
+    id: '/docentes',
+    path: '/docentes',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelEstudiantesRoute =
+  AuthenticatedPanelEstudiantesRouteImport.update({
+    id: '/estudiantes',
+    path: '/estudiantes',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/cursos': typeof AuthenticatedPanelCursosRoute
+  '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
+  '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel/': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/cursos': typeof AuthenticatedPanelCursosRoute
+  '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
+  '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
   '/eventos': typeof EventosRoute
   '/nosotros': typeof NosotrosRoute
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
+  '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/_authenticated/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/_authenticated/panel/cursos': typeof AuthenticatedPanelCursosRoute
+  '/_authenticated/panel/docentes': typeof AuthenticatedPanelDocentesRoute
+  '/_authenticated/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/_authenticated/panel/': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
+    | '/panel'
+    | '/panel/academico'
+    | '/panel/cursos'
+    | '/panel/docentes'
+    | '/panel/estudiantes'
+    | '/panel/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
+    | '/panel/academico'
+    | '/panel/cursos'
+    | '/panel/docentes'
+    | '/panel/estudiantes'
+    | '/panel'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/contacto'
     | '/eventos'
     | '/nosotros'
     | '/noticias'
     | '/oferta-academica'
+    | '/restablecer-contrasena'
+    | '/_authenticated/panel'
+    | '/_authenticated/panel/academico'
+    | '/_authenticated/panel/cursos'
+    | '/_authenticated/panel/docentes'
+    | '/_authenticated/panel/estudiantes'
+    | '/_authenticated/panel/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
   EventosRoute: typeof EventosRoute
   NosotrosRoute: typeof NosotrosRoute
   NoticiasRoute: typeof NoticiasRoute
   OfertaAcademicaRoute: typeof OfertaAcademicaRoute
+  RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +223,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contacto': {
@@ -152,16 +274,98 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfertaAcademicaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/restablecer-contrasena': {
+      id: '/restablecer-contrasena'
+      path: '/restablecer-contrasena'
+      fullPath: '/restablecer-contrasena'
+      preLoaderRoute: typeof RestablecerContrasenaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/panel': {
+      id: '/_authenticated/panel'
+      path: '/panel'
+      fullPath: '/panel'
+      preLoaderRoute: typeof AuthenticatedPanelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/panel/': {
+      id: '/_authenticated/panel/'
+      path: '/'
+      fullPath: '/panel/'
+      preLoaderRoute: typeof AuthenticatedPanelIndexRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/academico': {
+      id: '/_authenticated/panel/academico'
+      path: '/academico'
+      fullPath: '/panel/academico'
+      preLoaderRoute: typeof AuthenticatedPanelAcademicoRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/cursos': {
+      id: '/_authenticated/panel/cursos'
+      path: '/cursos'
+      fullPath: '/panel/cursos'
+      preLoaderRoute: typeof AuthenticatedPanelCursosRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/docentes': {
+      id: '/_authenticated/panel/docentes'
+      path: '/docentes'
+      fullPath: '/panel/docentes'
+      preLoaderRoute: typeof AuthenticatedPanelDocentesRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/estudiantes': {
+      id: '/_authenticated/panel/estudiantes'
+      path: '/estudiantes'
+      fullPath: '/panel/estudiantes'
+      preLoaderRoute: typeof AuthenticatedPanelEstudiantesRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
   }
 }
 
+interface AuthenticatedPanelRouteChildren {
+  AuthenticatedPanelAcademicoRoute: typeof AuthenticatedPanelAcademicoRoute
+  AuthenticatedPanelCursosRoute: typeof AuthenticatedPanelCursosRoute
+  AuthenticatedPanelDocentesRoute: typeof AuthenticatedPanelDocentesRoute
+  AuthenticatedPanelEstudiantesRoute: typeof AuthenticatedPanelEstudiantesRoute
+  AuthenticatedPanelIndexRoute: typeof AuthenticatedPanelIndexRoute
+}
+
+const AuthenticatedPanelRouteChildren: AuthenticatedPanelRouteChildren = {
+  AuthenticatedPanelAcademicoRoute: AuthenticatedPanelAcademicoRoute,
+  AuthenticatedPanelCursosRoute: AuthenticatedPanelCursosRoute,
+  AuthenticatedPanelDocentesRoute: AuthenticatedPanelDocentesRoute,
+  AuthenticatedPanelEstudiantesRoute: AuthenticatedPanelEstudiantesRoute,
+  AuthenticatedPanelIndexRoute: AuthenticatedPanelIndexRoute,
+}
+
+const AuthenticatedPanelRouteWithChildren =
+  AuthenticatedPanelRoute._addFileChildren(AuthenticatedPanelRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPanelRoute: typeof AuthenticatedPanelRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPanelRoute: AuthenticatedPanelRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,
   EventosRoute: EventosRoute,
   NosotrosRoute: NosotrosRoute,
   NoticiasRoute: NoticiasRoute,
   OfertaAcademicaRoute: OfertaAcademicaRoute,
+  RestablecerContrasenaRoute: RestablecerContrasenaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
