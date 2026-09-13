@@ -20,6 +20,8 @@ import { Route as OfertaAcademicaRouteImport } from './routes/oferta-academica'
 import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
+import { Route as AuthenticatedPanelAcademicoRouteImport } from './routes/_authenticated/panel.academico'
+import { Route as AuthenticatedPanelCursosRouteImport } from './routes/_authenticated/panel.cursos'
 import { Route as AuthenticatedPanelDocentesRouteImport } from './routes/_authenticated/panel.docentes'
 import { Route as AuthenticatedPanelEstudiantesRouteImport } from './routes/_authenticated/panel.estudiantes'
 
@@ -77,6 +79,18 @@ const AuthenticatedPanelIndexRoute = AuthenticatedPanelIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedPanelRoute,
 } as any)
+const AuthenticatedPanelAcademicoRoute =
+  AuthenticatedPanelAcademicoRouteImport.update({
+    id: '/academico',
+    path: '/academico',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelCursosRoute =
+  AuthenticatedPanelCursosRouteImport.update({
+    id: '/cursos',
+    path: '/cursos',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 const AuthenticatedPanelDocentesRoute =
   AuthenticatedPanelDocentesRouteImport.update({
     id: '/docentes',
@@ -100,6 +114,8 @@ export interface FileRoutesByFullPath {
   '/oferta-academica': typeof OfertaAcademicaRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
   '/panel/': typeof AuthenticatedPanelIndexRoute
@@ -113,6 +129,8 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasRoute
   '/oferta-academica': typeof OfertaAcademicaRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
   '/panel': typeof AuthenticatedPanelIndexRoute
@@ -129,6 +147,8 @@ export interface FileRoutesById {
   '/oferta-academica': typeof OfertaAcademicaRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
+  '/_authenticated/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/_authenticated/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/_authenticated/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/_authenticated/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
   '/_authenticated/panel/': typeof AuthenticatedPanelIndexRoute
@@ -145,6 +165,8 @@ export interface FileRouteTypes {
     | '/oferta-academica'
     | '/restablecer-contrasena'
     | '/panel'
+    | '/panel/academico'
+    | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
     | '/panel/'
@@ -158,6 +180,8 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/oferta-academica'
     | '/restablecer-contrasena'
+    | '/panel/academico'
+    | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
     | '/panel'
@@ -173,6 +197,8 @@ export interface FileRouteTypes {
     | '/oferta-academica'
     | '/restablecer-contrasena'
     | '/_authenticated/panel'
+    | '/_authenticated/panel/academico'
+    | '/_authenticated/panel/cursos'
     | '/_authenticated/panel/docentes'
     | '/_authenticated/panel/estudiantes'
     | '/_authenticated/panel/'
@@ -269,6 +295,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelIndexRouteImport
       parentRoute: typeof AuthenticatedPanelRoute
     }
+    '/_authenticated/panel/academico': {
+      id: '/_authenticated/panel/academico'
+      path: '/academico'
+      fullPath: '/panel/academico'
+      preLoaderRoute: typeof AuthenticatedPanelAcademicoRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/cursos': {
+      id: '/_authenticated/panel/cursos'
+      path: '/cursos'
+      fullPath: '/panel/cursos'
+      preLoaderRoute: typeof AuthenticatedPanelCursosRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
     '/_authenticated/panel/docentes': {
       id: '/_authenticated/panel/docentes'
       path: '/docentes'
@@ -287,12 +327,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedPanelRouteChildren {
+  AuthenticatedPanelAcademicoRoute: typeof AuthenticatedPanelAcademicoRoute
+  AuthenticatedPanelCursosRoute: typeof AuthenticatedPanelCursosRoute
   AuthenticatedPanelDocentesRoute: typeof AuthenticatedPanelDocentesRoute
   AuthenticatedPanelEstudiantesRoute: typeof AuthenticatedPanelEstudiantesRoute
   AuthenticatedPanelIndexRoute: typeof AuthenticatedPanelIndexRoute
 }
 
 const AuthenticatedPanelRouteChildren: AuthenticatedPanelRouteChildren = {
+  AuthenticatedPanelAcademicoRoute: AuthenticatedPanelAcademicoRoute,
+  AuthenticatedPanelCursosRoute: AuthenticatedPanelCursosRoute,
   AuthenticatedPanelDocentesRoute: AuthenticatedPanelDocentesRoute,
   AuthenticatedPanelEstudiantesRoute: AuthenticatedPanelEstudiantesRoute,
   AuthenticatedPanelIndexRoute: AuthenticatedPanelIndexRoute,
