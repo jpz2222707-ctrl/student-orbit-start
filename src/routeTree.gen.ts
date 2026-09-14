@@ -21,9 +21,14 @@ import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as AuthenticatedPanelIndexRouteImport } from './routes/_authenticated/panel.index'
 import { Route as AuthenticatedPanelAcademicoRouteImport } from './routes/_authenticated/panel.academico'
+import { Route as AuthenticatedPanelAuditoriaRouteImport } from './routes/_authenticated/panel.auditoria'
+import { Route as AuthenticatedPanelBoletinesRouteImport } from './routes/_authenticated/panel.boletines'
+import { Route as AuthenticatedPanelCalificacionesRouteImport } from './routes/_authenticated/panel.calificaciones'
 import { Route as AuthenticatedPanelCursosRouteImport } from './routes/_authenticated/panel.cursos'
 import { Route as AuthenticatedPanelDocentesRouteImport } from './routes/_authenticated/panel.docentes'
 import { Route as AuthenticatedPanelEstudiantesRouteImport } from './routes/_authenticated/panel.estudiantes'
+import { Route as AuthenticatedPanelMisNotasRouteImport } from './routes/_authenticated/panel.mis-notas'
+import { Route as AuthenticatedPanelUsuariosRouteImport } from './routes/_authenticated/panel.usuarios'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -85,6 +90,24 @@ const AuthenticatedPanelAcademicoRoute =
     path: '/academico',
     getParentRoute: () => AuthenticatedPanelRoute,
   } as any)
+const AuthenticatedPanelAuditoriaRoute =
+  AuthenticatedPanelAuditoriaRouteImport.update({
+    id: '/auditoria',
+    path: '/auditoria',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelBoletinesRoute =
+  AuthenticatedPanelBoletinesRouteImport.update({
+    id: '/boletines',
+    path: '/boletines',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelCalificacionesRoute =
+  AuthenticatedPanelCalificacionesRouteImport.update({
+    id: '/calificaciones',
+    path: '/calificaciones',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 const AuthenticatedPanelCursosRoute =
   AuthenticatedPanelCursosRouteImport.update({
     id: '/cursos',
@@ -103,6 +126,18 @@ const AuthenticatedPanelEstudiantesRoute =
     path: '/estudiantes',
     getParentRoute: () => AuthenticatedPanelRoute,
   } as any)
+const AuthenticatedPanelMisNotasRoute =
+  AuthenticatedPanelMisNotasRouteImport.update({
+    id: '/mis-notas',
+    path: '/mis-notas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelUsuariosRoute =
+  AuthenticatedPanelUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -115,9 +150,14 @@ export interface FileRoutesByFullPath {
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/panel': typeof AuthenticatedPanelRouteWithChildren
   '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/auditoria': typeof AuthenticatedPanelAuditoriaRoute
+  '/panel/boletines': typeof AuthenticatedPanelBoletinesRoute
+  '/panel/calificaciones': typeof AuthenticatedPanelCalificacionesRoute
   '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/panel/': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRoutesByTo {
@@ -130,9 +170,14 @@ export interface FileRoutesByTo {
   '/oferta-academica': typeof OfertaAcademicaRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/panel/auditoria': typeof AuthenticatedPanelAuditoriaRoute
+  '/panel/boletines': typeof AuthenticatedPanelBoletinesRoute
+  '/panel/calificaciones': typeof AuthenticatedPanelCalificacionesRoute
   '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/panel': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRoutesById {
@@ -148,9 +193,14 @@ export interface FileRoutesById {
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRouteWithChildren
   '/_authenticated/panel/academico': typeof AuthenticatedPanelAcademicoRoute
+  '/_authenticated/panel/auditoria': typeof AuthenticatedPanelAuditoriaRoute
+  '/_authenticated/panel/boletines': typeof AuthenticatedPanelBoletinesRoute
+  '/_authenticated/panel/calificaciones': typeof AuthenticatedPanelCalificacionesRoute
   '/_authenticated/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/_authenticated/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/_authenticated/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/_authenticated/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/_authenticated/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/_authenticated/panel/': typeof AuthenticatedPanelIndexRoute
 }
 export interface FileRouteTypes {
@@ -166,9 +216,14 @@ export interface FileRouteTypes {
     | '/restablecer-contrasena'
     | '/panel'
     | '/panel/academico'
+    | '/panel/auditoria'
+    | '/panel/boletines'
+    | '/panel/calificaciones'
     | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
+    | '/panel/mis-notas'
+    | '/panel/usuarios'
     | '/panel/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -181,9 +236,14 @@ export interface FileRouteTypes {
     | '/oferta-academica'
     | '/restablecer-contrasena'
     | '/panel/academico'
+    | '/panel/auditoria'
+    | '/panel/boletines'
+    | '/panel/calificaciones'
     | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
+    | '/panel/mis-notas'
+    | '/panel/usuarios'
     | '/panel'
   id:
     | '__root__'
@@ -198,9 +258,14 @@ export interface FileRouteTypes {
     | '/restablecer-contrasena'
     | '/_authenticated/panel'
     | '/_authenticated/panel/academico'
+    | '/_authenticated/panel/auditoria'
+    | '/_authenticated/panel/boletines'
+    | '/_authenticated/panel/calificaciones'
     | '/_authenticated/panel/cursos'
     | '/_authenticated/panel/docentes'
     | '/_authenticated/panel/estudiantes'
+    | '/_authenticated/panel/mis-notas'
+    | '/_authenticated/panel/usuarios'
     | '/_authenticated/panel/'
   fileRoutesById: FileRoutesById
 }
@@ -302,6 +367,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelAcademicoRouteImport
       parentRoute: typeof AuthenticatedPanelRoute
     }
+    '/_authenticated/panel/auditoria': {
+      id: '/_authenticated/panel/auditoria'
+      path: '/auditoria'
+      fullPath: '/panel/auditoria'
+      preLoaderRoute: typeof AuthenticatedPanelAuditoriaRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/boletines': {
+      id: '/_authenticated/panel/boletines'
+      path: '/boletines'
+      fullPath: '/panel/boletines'
+      preLoaderRoute: typeof AuthenticatedPanelBoletinesRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/calificaciones': {
+      id: '/_authenticated/panel/calificaciones'
+      path: '/calificaciones'
+      fullPath: '/panel/calificaciones'
+      preLoaderRoute: typeof AuthenticatedPanelCalificacionesRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
     '/_authenticated/panel/cursos': {
       id: '/_authenticated/panel/cursos'
       path: '/cursos'
@@ -323,22 +409,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelEstudiantesRouteImport
       parentRoute: typeof AuthenticatedPanelRoute
     }
+    '/_authenticated/panel/mis-notas': {
+      id: '/_authenticated/panel/mis-notas'
+      path: '/mis-notas'
+      fullPath: '/panel/mis-notas'
+      preLoaderRoute: typeof AuthenticatedPanelMisNotasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/usuarios': {
+      id: '/_authenticated/panel/usuarios'
+      path: '/usuarios'
+      fullPath: '/panel/usuarios'
+      preLoaderRoute: typeof AuthenticatedPanelUsuariosRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
   }
 }
 
 interface AuthenticatedPanelRouteChildren {
   AuthenticatedPanelAcademicoRoute: typeof AuthenticatedPanelAcademicoRoute
+  AuthenticatedPanelAuditoriaRoute: typeof AuthenticatedPanelAuditoriaRoute
+  AuthenticatedPanelBoletinesRoute: typeof AuthenticatedPanelBoletinesRoute
+  AuthenticatedPanelCalificacionesRoute: typeof AuthenticatedPanelCalificacionesRoute
   AuthenticatedPanelCursosRoute: typeof AuthenticatedPanelCursosRoute
   AuthenticatedPanelDocentesRoute: typeof AuthenticatedPanelDocentesRoute
   AuthenticatedPanelEstudiantesRoute: typeof AuthenticatedPanelEstudiantesRoute
+  AuthenticatedPanelMisNotasRoute: typeof AuthenticatedPanelMisNotasRoute
+  AuthenticatedPanelUsuariosRoute: typeof AuthenticatedPanelUsuariosRoute
   AuthenticatedPanelIndexRoute: typeof AuthenticatedPanelIndexRoute
 }
 
 const AuthenticatedPanelRouteChildren: AuthenticatedPanelRouteChildren = {
   AuthenticatedPanelAcademicoRoute: AuthenticatedPanelAcademicoRoute,
+  AuthenticatedPanelAuditoriaRoute: AuthenticatedPanelAuditoriaRoute,
+  AuthenticatedPanelBoletinesRoute: AuthenticatedPanelBoletinesRoute,
+  AuthenticatedPanelCalificacionesRoute: AuthenticatedPanelCalificacionesRoute,
   AuthenticatedPanelCursosRoute: AuthenticatedPanelCursosRoute,
   AuthenticatedPanelDocentesRoute: AuthenticatedPanelDocentesRoute,
   AuthenticatedPanelEstudiantesRoute: AuthenticatedPanelEstudiantesRoute,
+  AuthenticatedPanelMisNotasRoute: AuthenticatedPanelMisNotasRoute,
+  AuthenticatedPanelUsuariosRoute: AuthenticatedPanelUsuariosRoute,
   AuthenticatedPanelIndexRoute: AuthenticatedPanelIndexRoute,
 }
 
