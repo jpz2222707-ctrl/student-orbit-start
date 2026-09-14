@@ -207,6 +207,7 @@ export const bootstrapDemoAccounts = createServerFn({ method: "POST" }).handler(
     { email: "acudiente@demo.edu.co", fullName: "Marta Ramírez Duque", roles: ["guardian"] },
   ];
 
+  const problems: string[] = [];
   for (const account of accounts) {
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: account.email,
@@ -214,14 +215,22 @@ export const bootstrapDemoAccounts = createServerFn({ method: "POST" }).handler(
       email_confirm: true,
       user_metadata: { full_name: account.fullName },
     });
-    if (error || !created.user) continue;
-    await supabaseAdmin
+    if (error || !created.user) {
+      problems.push(`${account.email}: ${error?.message ?? "sin usuario"}`);
+      continue;
+    }
+    const { error: roleError } = await supabaseAdmin
       .from("user_roles")
       .upsert(
         account.roles.map((role) => ({ user_id: created.user!.id, role })),
         { onConflict: "user_id,role" },
       );
+    if (roleError) problems.push(`${account.email}: ${roleError.message}`);
   }
 
-  return { password, emails: accounts.map((a) => a.email) };
+  if (problems.length === accounts.length) {
+    throw new Error(`No fue posible crear las cuentas. ${problems.join(" | ")}`);
+  }
+
+  return { password, emails: accounts.map((a) => a.email), problems };
 });
