@@ -70,7 +70,48 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
 };
 
 /** Escala institucional por defecto (configurable en la base de datos). */
-export const DEFAULT_SCALE = { min: 1, max: 5, passing: 3 };
+export const DEFAULT_SCALE = { min: 0, max: 5, passing: 3 };
+
+/**
+ * Escala de desempeño institucional.
+ * Punto único de cambio: modifique los umbrales aquí y se refleja en notas,
+ * boletines e historial académico.
+ */
+export type PerformanceLevel = "superior" | "alto" | "basico" | "bajo";
+
+export const PERFORMANCE_LEVELS: { level: PerformanceLevel; label: string; min: number }[] = [
+  { level: "superior", label: "Superior", min: 4.6 },
+  { level: "alto", label: "Alto", min: 4.0 },
+  { level: "basico", label: "Básico", min: 3.0 },
+  { level: "bajo", label: "Bajo", min: 0 },
+];
+
+export function performanceOf(score: number | null | undefined): PerformanceLevel | null {
+  if (score === null || score === undefined || Number.isNaN(Number(score))) return null;
+  const found = PERFORMANCE_LEVELS.find((l) => Number(score) >= l.min);
+  return found?.level ?? "bajo";
+}
+
+export function performanceLabel(score: number | null | undefined): string {
+  const level = performanceOf(score);
+  if (!level) return "—";
+  return PERFORMANCE_LEVELS.find((l) => l.level === level)!.label;
+}
+
+/** Valida una nota escrita por el docente contra la escala institucional. */
+export function parseScore(
+  raw: string,
+  scale: { min: number; max: number } = DEFAULT_SCALE,
+): { ok: true; value: number } | { ok: false; error: string } {
+  const normalized = raw.trim().replace(",", ".");
+  if (normalized === "") return { ok: false, error: "La nota está vacía" };
+  const value = Number(normalized);
+  if (!Number.isFinite(value)) return { ok: false, error: "La nota debe ser un número" };
+  if (value < scale.min || value > scale.max) {
+    return { ok: false, error: `Las notas deben estar entre ${scale.min} y ${scale.max}` };
+  }
+  return { ok: true, value: round2(value) };
+}
 
 export function fullName(p: { first_name: string; last_name: string }): string {
   return `${p.first_name} ${p.last_name}`.trim();
