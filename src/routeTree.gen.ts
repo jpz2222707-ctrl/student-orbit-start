@@ -27,7 +27,9 @@ import { Route as AuthenticatedPanelCalificacionesRouteImport } from './routes/_
 import { Route as AuthenticatedPanelCursosRouteImport } from './routes/_authenticated/panel.cursos'
 import { Route as AuthenticatedPanelDocentesRouteImport } from './routes/_authenticated/panel.docentes'
 import { Route as AuthenticatedPanelEstudiantesRouteImport } from './routes/_authenticated/panel.estudiantes'
+import { Route as AuthenticatedPanelHistorialRouteImport } from './routes/_authenticated/panel.historial'
 import { Route as AuthenticatedPanelMisNotasRouteImport } from './routes/_authenticated/panel.mis-notas'
+import { Route as AuthenticatedPanelPeriodosRouteImport } from './routes/_authenticated/panel.periodos'
 import { Route as AuthenticatedPanelUsuariosRouteImport } from './routes/_authenticated/panel.usuarios'
 
 const IndexRoute = IndexRouteImport.update({
@@ -126,10 +128,22 @@ const AuthenticatedPanelEstudiantesRoute =
     path: '/estudiantes',
     getParentRoute: () => AuthenticatedPanelRoute,
   } as any)
+const AuthenticatedPanelHistorialRoute =
+  AuthenticatedPanelHistorialRouteImport.update({
+    id: '/historial',
+    path: '/historial',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
 const AuthenticatedPanelMisNotasRoute =
   AuthenticatedPanelMisNotasRouteImport.update({
     id: '/mis-notas',
     path: '/mis-notas',
+    getParentRoute: () => AuthenticatedPanelRoute,
+  } as any)
+const AuthenticatedPanelPeriodosRoute =
+  AuthenticatedPanelPeriodosRouteImport.update({
+    id: '/periodos',
+    path: '/periodos',
     getParentRoute: () => AuthenticatedPanelRoute,
   } as any)
 const AuthenticatedPanelUsuariosRoute =
@@ -156,7 +170,9 @@ export interface FileRoutesByFullPath {
   '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel/historial': typeof AuthenticatedPanelHistorialRoute
   '/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/panel/periodos': typeof AuthenticatedPanelPeriodosRoute
   '/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/panel/': typeof AuthenticatedPanelIndexRoute
 }
@@ -176,7 +192,9 @@ export interface FileRoutesByTo {
   '/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/panel/historial': typeof AuthenticatedPanelHistorialRoute
   '/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/panel/periodos': typeof AuthenticatedPanelPeriodosRoute
   '/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/panel': typeof AuthenticatedPanelIndexRoute
 }
@@ -199,7 +217,9 @@ export interface FileRoutesById {
   '/_authenticated/panel/cursos': typeof AuthenticatedPanelCursosRoute
   '/_authenticated/panel/docentes': typeof AuthenticatedPanelDocentesRoute
   '/_authenticated/panel/estudiantes': typeof AuthenticatedPanelEstudiantesRoute
+  '/_authenticated/panel/historial': typeof AuthenticatedPanelHistorialRoute
   '/_authenticated/panel/mis-notas': typeof AuthenticatedPanelMisNotasRoute
+  '/_authenticated/panel/periodos': typeof AuthenticatedPanelPeriodosRoute
   '/_authenticated/panel/usuarios': typeof AuthenticatedPanelUsuariosRoute
   '/_authenticated/panel/': typeof AuthenticatedPanelIndexRoute
 }
@@ -222,7 +242,9 @@ export interface FileRouteTypes {
     | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
+    | '/panel/historial'
     | '/panel/mis-notas'
+    | '/panel/periodos'
     | '/panel/usuarios'
     | '/panel/'
   fileRoutesByTo: FileRoutesByTo
@@ -242,7 +264,9 @@ export interface FileRouteTypes {
     | '/panel/cursos'
     | '/panel/docentes'
     | '/panel/estudiantes'
+    | '/panel/historial'
     | '/panel/mis-notas'
+    | '/panel/periodos'
     | '/panel/usuarios'
     | '/panel'
   id:
@@ -264,7 +288,9 @@ export interface FileRouteTypes {
     | '/_authenticated/panel/cursos'
     | '/_authenticated/panel/docentes'
     | '/_authenticated/panel/estudiantes'
+    | '/_authenticated/panel/historial'
     | '/_authenticated/panel/mis-notas'
+    | '/_authenticated/panel/periodos'
     | '/_authenticated/panel/usuarios'
     | '/_authenticated/panel/'
   fileRoutesById: FileRoutesById
@@ -409,11 +435,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelEstudiantesRouteImport
       parentRoute: typeof AuthenticatedPanelRoute
     }
+    '/_authenticated/panel/historial': {
+      id: '/_authenticated/panel/historial'
+      path: '/historial'
+      fullPath: '/panel/historial'
+      preLoaderRoute: typeof AuthenticatedPanelHistorialRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
     '/_authenticated/panel/mis-notas': {
       id: '/_authenticated/panel/mis-notas'
       path: '/mis-notas'
       fullPath: '/panel/mis-notas'
       preLoaderRoute: typeof AuthenticatedPanelMisNotasRouteImport
+      parentRoute: typeof AuthenticatedPanelRoute
+    }
+    '/_authenticated/panel/periodos': {
+      id: '/_authenticated/panel/periodos'
+      path: '/periodos'
+      fullPath: '/panel/periodos'
+      preLoaderRoute: typeof AuthenticatedPanelPeriodosRouteImport
       parentRoute: typeof AuthenticatedPanelRoute
     }
     '/_authenticated/panel/usuarios': {
@@ -434,7 +474,9 @@ interface AuthenticatedPanelRouteChildren {
   AuthenticatedPanelCursosRoute: typeof AuthenticatedPanelCursosRoute
   AuthenticatedPanelDocentesRoute: typeof AuthenticatedPanelDocentesRoute
   AuthenticatedPanelEstudiantesRoute: typeof AuthenticatedPanelEstudiantesRoute
+  AuthenticatedPanelHistorialRoute: typeof AuthenticatedPanelHistorialRoute
   AuthenticatedPanelMisNotasRoute: typeof AuthenticatedPanelMisNotasRoute
+  AuthenticatedPanelPeriodosRoute: typeof AuthenticatedPanelPeriodosRoute
   AuthenticatedPanelUsuariosRoute: typeof AuthenticatedPanelUsuariosRoute
   AuthenticatedPanelIndexRoute: typeof AuthenticatedPanelIndexRoute
 }
@@ -447,7 +489,9 @@ const AuthenticatedPanelRouteChildren: AuthenticatedPanelRouteChildren = {
   AuthenticatedPanelCursosRoute: AuthenticatedPanelCursosRoute,
   AuthenticatedPanelDocentesRoute: AuthenticatedPanelDocentesRoute,
   AuthenticatedPanelEstudiantesRoute: AuthenticatedPanelEstudiantesRoute,
+  AuthenticatedPanelHistorialRoute: AuthenticatedPanelHistorialRoute,
   AuthenticatedPanelMisNotasRoute: AuthenticatedPanelMisNotasRoute,
+  AuthenticatedPanelPeriodosRoute: AuthenticatedPanelPeriodosRoute,
   AuthenticatedPanelUsuariosRoute: AuthenticatedPanelUsuariosRoute,
   AuthenticatedPanelIndexRoute: AuthenticatedPanelIndexRoute,
 }
