@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -36,14 +36,14 @@ function AcademicPage() {
   return (
     <>
       <PanelHeader
-        title="Estructura académica"
-        description="Grados, materias, años escolares y períodos de calificación."
+        title="Grados y asignaturas"
+        description="Grados, asignaturas y calendario de años escolares."
       />
       <Tabs defaultValue="grados">
         <TabsList>
           <TabsTrigger value="grados">Grados</TabsTrigger>
           <TabsTrigger value="materias">Materias</TabsTrigger>
-          <TabsTrigger value="anios">Años y períodos</TabsTrigger>
+          <TabsTrigger value="anios">Años escolares</TabsTrigger>
         </TabsList>
         <TabsContent value="grados" className="mt-6">
           <GradeLevels />
