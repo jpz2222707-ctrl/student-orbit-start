@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { formatScore, isPassing, weightedFinal } from "@/lib/domain";
+import { formatScore, isPassing, performanceLabel, weightedFinal } from "@/lib/domain";
 import { useActiveYear, useInstitution, usePeriods } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/panel/mis-notas")({
@@ -155,7 +155,9 @@ function MyGradesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <CardTitle className="font-display text-base">{r.subject}</CardTitle>
-                    <CardDescription>{r.course}</CardDescription>
+                    <CardDescription>
+                      {r.course} · {performanceLabel(r.final)}
+                    </CardDescription>
                   </div>
                   <Badge variant={isPassing(r.final, passing) ? "default" : "destructive"}>
                     {formatScore(r.final)}

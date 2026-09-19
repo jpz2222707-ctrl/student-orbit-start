@@ -26,13 +26,15 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { formatDateTime, formatScore, isPassing } from "@/lib/domain";
-import { loadCourseResults, overallAverage } from "@/lib/grades";
+import { formatScore, isPassing, performanceLabel } from "@/lib/domain";
+import { courseAverage, loadCourseResults, loadStudentHistory, overallAverage } from "@/lib/grades";
 import { useActiveYear, useCourses, useInstitution, usePeriods } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/panel/boletines")({
   component: ReportCardsPage,
 });
+
+type ReportRow = { subject: string; teacher: string; final: number | null };
 
 function ReportCardsPage() {
   const auth = useAuth();
@@ -43,12 +45,85 @@ function ReportCardsPage() {
         title="Boletines"
         description={
           staff
-            ? "Consolide las definitivas del período y guarde el boletín de cada estudiante."
-            : "Boletines publicados por la institución."
+            ? "Consolide las definitivas del período, revise el boletín de cada estudiante y guárdelo."
+            : "Boletín académico del período seleccionado."
         }
       />
       {staff ? <StaffReportCards /> : <StudentReportCards />}
     </>
+  );
+}
+
+/** Boletín individual reutilizado por el personal y por estudiantes/acudientes. */
+function ReportCardDetail({
+  student,
+  course,
+  year,
+  period,
+  rows,
+  passing,
+}: {
+  student: { first_name: string; last_name: string; document_type?: string; document_number?: string };
+  course: string;
+  year: string;
+  period: string;
+  rows: ReportRow[];
+  passing: number;
+}) {
+  const avg = rows.length ? overallAverage(rows.map((r) => ({ ...r, courseSubjectId: "", items: [] }))) : null;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-display text-lg">
+          {student.first_name} {student.last_name}
+        </CardTitle>
+        <CardDescription>
+          {student.document_type ? `${student.document_type} ${student.document_number} · ` : ""}
+          Curso {course || "—"} · Año {year || "—"} · {period || "—"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Asignatura</TableHead>
+                <TableHead>Docente</TableHead>
+                <TableHead className="text-center">Nota</TableHead>
+                <TableHead className="text-center">Desempeño</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-sm text-muted-foreground">
+                    Sin calificaciones registradas en este período.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                rows.map((r) => (
+                  <TableRow key={r.subject}>
+                    <TableCell className="font-medium">{r.subject}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{r.teacher}</TableCell>
+                    <TableCell className="text-center">{formatScore(r.final)}</TableCell>
+                    <TableCell className="text-center text-sm">
+                      {performanceLabel(r.final)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+          <span className="text-sm text-muted-foreground">Promedio del período</span>
+          <Badge variant={isPassing(avg, passing) ? "default" : "destructive"}>
+            {formatScore(avg)}
+          </Badge>
+          <span className="text-sm text-muted-foreground">{performanceLabel(avg)}</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -61,6 +136,7 @@ function StaffReportCards() {
   const { data: periods = [] } = usePeriods(year?.id);
   const [courseId, setCourseId] = useState("");
   const [periodId, setPeriodId] = useState("");
+  const [detailId, setDetailId] = useState("");
   const passing = Number(institution?.passing_grade ?? 3);
 
   useEffect(() => {
@@ -68,32 +144,36 @@ function StaffReportCards() {
     if (active && !periodId) setPeriodId(active.id);
   }, [periods, periodId]);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["course-results", courseId, periodId],
-    enabled: Boolean(courseId && periodId),
-    queryFn: () => loadCourseResults(courseId, periodId),
-  });
-
   const { data: students = [] } = useQuery({
     queryKey: ["course-roster", courseId],
     enabled: Boolean(courseId),
     queryFn: async () => {
       const { data: rows, error } = await supabase
         .from("enrollments")
-        .select("students(id, first_name, last_name)")
+        .select("students(id, first_name, last_name, document_type, document_number)")
         .eq("course_id", courseId)
         .eq("is_active", true);
       if (error) throw error;
       return (rows ?? [])
         .map((r) => r.students)
-        .filter((s): s is { id: string; first_name: string; last_name: string } => Boolean(s))
+        .filter((s): s is NonNullable<typeof s> => Boolean(s))
         .sort((a, b) => a.last_name.localeCompare(b.last_name));
     },
+  });
+
+  const studentIds = students.map((s) => s.id);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["course-results", courseId, periodId, studentIds.join(",")],
+    enabled: Boolean(courseId && periodId),
+    queryFn: () => loadCourseResults(courseId, periodId, studentIds),
   });
 
   const save = useMutation({
     mutationFn: async () => {
       if (!data) throw new Error("No hay resultados para guardar");
+      const course = courses.find((c) => c.id === courseId);
+      const period = periods.find((p) => p.id === periodId);
       const rows = students.map((s) => {
         const results = data.byStudent[s.id] ?? [];
         return {
@@ -103,11 +183,22 @@ function StaffReportCards() {
           average: overallAverage(results),
           payload: {
             student: `${s.first_name} ${s.last_name}`,
-            subjects: results.map((r) => ({ subject: r.subject, final: r.final, items: r.items })),
+            document: `${s.document_type} ${s.document_number}`,
+            course: course ? `${course.code} · ${course.name}` : "",
+            year: year?.name ?? "",
+            period: period?.name ?? "",
+            subjects: results.map((r) => ({
+              subject: r.subject,
+              teacher: r.teacher,
+              final: r.final,
+              items: r.items,
+            })),
           },
         };
       });
-      const { error } = await supabase.from("report_cards").insert(rows);
+      const { error } = await supabase
+        .from("report_cards")
+        .upsert(rows, { onConflict: "student_id,period_id" });
       if (error) throw error;
     },
     onSuccess: async () => {
@@ -118,6 +209,15 @@ function StaffReportCards() {
   });
 
   const subjects = data?.subjects ?? [];
+  const groupAverage = data ? courseAverage(data.byStudent) : null;
+  const detailStudent = students.find((s) => s.id === detailId);
+  const detailRows: ReportRow[] = detailStudent
+    ? (data?.byStudent[detailStudent.id] ?? []).map((r) => ({
+        subject: r.subject,
+        teacher: r.teacher,
+        final: r.final,
+      }))
+    : [];
 
   return (
     <>
@@ -172,13 +272,15 @@ function StaffReportCards() {
                       </TableHead>
                     ))}
                     <TableHead className="text-center">Promedio</TableHead>
+                    <TableHead className="text-center">Desempeño</TableHead>
+                    <TableHead />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {students.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={subjects.length + 2}
+                        colSpan={subjects.length + 4}
                         className="text-sm text-muted-foreground"
                       >
                         Este curso no tiene estudiantes matriculados.
@@ -206,6 +308,14 @@ function StaffReportCards() {
                               {formatScore(avg)}
                             </Badge>
                           </TableCell>
+                          <TableCell className="text-center text-sm">
+                            {performanceLabel(avg)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="outline" size="sm" onClick={() => setDetailId(s.id)}>
+                              Ver boletín
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       );
                     })
@@ -214,9 +324,16 @@ function StaffReportCards() {
               </Table>
             </div>
 
+            <p className="mt-3 text-sm text-muted-foreground">
+              Promedio general del curso: <strong>{formatScore(groupAverage)}</strong>
+            </p>
+
             <div className="mt-4 flex flex-wrap gap-3">
               {auth.isAdmin ? (
-                <Button onClick={() => save.mutate()} disabled={save.isPending || students.length === 0}>
+                <Button
+                  onClick={() => save.mutate()}
+                  disabled={save.isPending || students.length === 0}
+                >
                   <Save className="size-4" />
                   {save.isPending ? "Guardando…" : "Guardar boletines del período"}
                 </Button>
@@ -225,6 +342,19 @@ function StaffReportCards() {
                 <Printer className="size-4" /> Imprimir
               </Button>
             </div>
+
+            {detailStudent ? (
+              <div className="mt-6">
+                <ReportCardDetail
+                  student={detailStudent}
+                  course={courses.find((c) => c.id === courseId)?.code ?? ""}
+                  year={year?.name ?? ""}
+                  period={periods.find((p) => p.id === periodId)?.name ?? ""}
+                  rows={detailRows}
+                  passing={passing}
+                />
+              </div>
+            ) : null}
           </>
         )
       ) : null}
@@ -233,55 +363,117 @@ function StaffReportCards() {
 }
 
 function StudentReportCards() {
-  const { data: cards = [], isLoading } = useQuery({
-    queryKey: ["report_cards"],
+  const { data: institution } = useInstitution();
+  const passing = Number(institution?.passing_grade ?? 3);
+  const [studentId, setStudentId] = useState("");
+  const [periodId, setPeriodId] = useState("");
+
+  /** Las reglas de la base de datos limitan la lista al propio estudiante o a
+   * los estudiantes vinculados al acudiente. */
+  const { data: students = [] } = useQuery({
+    queryKey: ["visible-students"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("report_cards")
-        .select("id, average, generated_at, payload, academic_periods(name), courses(code, name)")
-        .order("generated_at", { ascending: false });
+        .from("students")
+        .select("id, first_name, last_name, document_type, document_number")
+        .order("last_name");
       if (error) throw error;
       return data ?? [];
     },
   });
 
-  if (isLoading) return <p className="text-sm text-muted-foreground">Cargando boletines…</p>;
-  if (cards.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Todavía no hay boletines publicados. Consulte sus notas en la sección Mis notas.
-      </p>
-    );
-  }
+  useEffect(() => {
+    if (!studentId && students[0]) setStudentId(students[0].id);
+  }, [students, studentId]);
+
+  const { data: history = [], isLoading } = useQuery({
+    queryKey: ["student-history", studentId],
+    enabled: Boolean(studentId),
+    queryFn: () => loadStudentHistory(studentId),
+  });
+
+  useEffect(() => {
+    if (!periodId && history[0]) setPeriodId(history[0].periodId);
+  }, [history, periodId]);
+
+  const { data: enrollment } = useQuery({
+    queryKey: ["student-course", studentId],
+    enabled: Boolean(studentId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("enrollments")
+        .select("courses(code, name), academic_years(name)")
+        .eq("student_id", studentId)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const student = students.find((s) => s.id === studentId);
+  const entry = history.find((h) => h.periodId === periodId);
+
+  if (isLoading) return <p className="text-sm text-muted-foreground">Cargando boletín…</p>;
 
   return (
-    <div className="space-y-4">
-      {cards.map((card) => {
-        const payload = card.payload as {
-          subjects?: { subject: string; final: number | null }[];
-        } | null;
-        return (
-          <Card key={card.id}>
-            <CardHeader>
-              <CardTitle className="font-display text-lg">
-                {card.academic_periods?.name} · {card.courses?.code}
-              </CardTitle>
-              <CardDescription>
-                Generado el {formatDateTime(card.generated_at)} · Promedio{" "}
-                {formatScore(card.average)}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-1.5">
-              {(payload?.subjects ?? []).map((s) => (
-                <div key={s.subject} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{s.subject}</span>
-                  <span className="font-medium">{formatScore(s.final)}</span>
-                </div>
+    <>
+      <div className="mb-6 grid gap-4 sm:max-w-xl sm:grid-cols-2">
+        {students.length > 1 ? (
+          <div className="space-y-2">
+            <Label>Estudiante</Label>
+            <Select value={studentId} onValueChange={setStudentId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccione" />
+              </SelectTrigger>
+              <SelectContent>
+                {students.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.last_name}, {s.first_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ) : null}
+        <div className="space-y-2">
+          <Label>Período</Label>
+          <Select value={periodId} onValueChange={setPeriodId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione" />
+            </SelectTrigger>
+            <SelectContent>
+              {history.map((h) => (
+                <SelectItem key={h.periodId} value={h.periodId}>
+                  {h.year} · {h.period}
+                </SelectItem>
               ))}
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {!student || history.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          Todavía no hay calificaciones registradas para generar el boletín.
+        </p>
+      ) : (
+        <>
+          <ReportCardDetail
+            student={student}
+            course={enrollment?.courses ? `${enrollment.courses.code}` : ""}
+            year={entry?.year ?? enrollment?.academic_years?.name ?? ""}
+            period={entry?.period ?? ""}
+            rows={entry?.subjects ?? []}
+            passing={passing}
+          />
+          <div className="mt-4">
+            <Button variant="outline" onClick={() => window.print()}>
+              <Printer className="size-4" /> Imprimir boletín
+            </Button>
+          </div>
+        </>
+      )}
+    </>
   );
 }

@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { formatScore, isPassing, weightedFinal } from "@/lib/domain";
+import { formatScore, isPassing, parseScore, performanceLabel, weightedFinal } from "@/lib/domain";
 import { useActiveYear, useInstitution, usePeriods } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/panel/calificaciones")({
@@ -162,15 +162,14 @@ function GradesPage() {
 
   const saveScores = useMutation({
     mutationFn: async () => {
-      const rows = Object.entries(draft)
-        .filter(([, value]) => value.trim() !== "")
-        .map(([key, value]) => {
-          const [studentId, itemId] = key.split(":");
-          return { student_id: studentId!, grade_item_id: itemId!, score: Number(value) };
-        });
-      const invalid = rows.find((r) => Number.isNaN(r.score) || r.score < minGrade || r.score > maxGrade);
-      if (invalid) throw new Error(`Las notas deben estar entre ${minGrade} y ${maxGrade}`);
-      if (rows.length === 0) throw new Error("No hay cambios por guardar");
+      const entries = Object.entries(draft).filter(([, value]) => value.trim() !== "");
+      if (entries.length === 0) throw new Error("No hay cambios por guardar");
+      const rows = entries.map(([key, value]) => {
+        const [studentId, itemId] = key.split(":");
+        const parsed = parseScore(value, { min: minGrade, max: maxGrade });
+        if (!parsed.ok) throw new Error(parsed.error);
+        return { student_id: studentId!, grade_item_id: itemId!, score: parsed.value };
+      });
       const { error } = await supabase
         .from("grade_scores")
         .upsert(rows, { onConflict: "grade_item_id,student_id" });
@@ -372,6 +371,9 @@ function GradesPage() {
                           <Badge variant={isPassing(final, passing) ? "default" : "destructive"}>
                             {formatScore(final)}
                           </Badge>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {performanceLabel(final)}
+                          </span>
                         </TableCell>
                       </TableRow>
                     );

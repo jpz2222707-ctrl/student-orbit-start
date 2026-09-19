@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileText,
   GraduationCap,
+  History,
   Home,
   LogOut,
   Menu,
@@ -28,8 +29,9 @@ function navFor(flags: { isAdmin: boolean; isTeacher: boolean; isStudent: boolea
     items.push(
       { to: "/panel/estudiantes", label: "Estudiantes", icon: Users },
       { to: "/panel/docentes", label: "Docentes", icon: UserSquare2 },
-      { to: "/panel/academico", label: "Estructura académica", icon: CalendarRange },
+      { to: "/panel/academico", label: "Grados y asignaturas", icon: CalendarRange },
       { to: "/panel/cursos", label: "Cursos y matrículas", icon: BookMarked },
+      { to: "/panel/periodos", label: "Períodos académicos", icon: CalendarRange },
     );
   }
   if (flags.isAdmin || flags.isTeacher) {
@@ -39,6 +41,7 @@ function navFor(flags: { isAdmin: boolean; isTeacher: boolean; isStudent: boolea
   if (flags.isStudent || flags.isGuardian) {
     items.push({ to: "/panel/mis-notas", label: "Mis notas", icon: ClipboardList });
   }
+  items.push({ to: "/panel/historial", label: "Historial académico", icon: History });
   if (flags.isAdmin) {
     items.push(
       { to: "/panel/usuarios", label: "Cuentas de acceso", icon: Users },
