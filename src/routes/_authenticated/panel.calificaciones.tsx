@@ -371,6 +371,9 @@ function GradesPage() {
                           <Badge variant={isPassing(final, passing) ? "default" : "destructive"}>
                             {formatScore(final)}
                           </Badge>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {performanceLabel(final)}
+                          </span>
                         </TableCell>
                       </TableRow>
                     );
