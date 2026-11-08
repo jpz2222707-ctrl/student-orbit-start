@@ -70,6 +70,16 @@ Cambie estas contraseñas antes de usar el sistema con datos reales.
 
 Sitio institucional público; acceso con correo y contraseña más recuperación; dashboards por rol; CRUD de estudiantes, docentes, grados, materias, años y períodos; cursos, asignación de materias con docente y matrículas; actividades con porcentajes, registro de notas y definitiva ponderada; boletines consolidados por período con impresión; consulta de notas para estudiantes y acudientes; gestión de cuentas y roles; auditoría; datos de demostración marcados y eliminables desde el panel.
 
-## 9. Pendiente para fases siguientes
+## 9. Implementado en la Fase 2
+
+- **Períodos académicos** (`/panel/periodos`): crear, editar nombre/orden/fechas, cambiar estado. Un solo período activo por año (al activar uno, los demás se cierran en la base de datos). No se eliminan períodos con actividades, notas, observaciones o boletines: se cierran.
+- **Calificaciones**: escala 0.0–5.0 validada en la interfaz (`parseScore`) y en la base de datos; una nota única por estudiante y actividad (se actualiza, no se duplica). Desempeño visible por estudiante.
+- **Desempeño** centralizado en `src/lib/domain.ts`: Superior ≥ 4.6, Alto ≥ 4.0, Básico ≥ 3.0, Bajo < 3.0.
+- **Promedios** calculados al vuelo: por asignatura (ponderado por porcentaje), del estudiante en el período y general del curso.
+- **Boletín**: nombre, documento, curso, año, período; asignatura, docente, nota y desempeño; promedio. Guardado como instantánea por estudiante y período (se actualiza al regenerar).
+- **Historial académico** (`/panel/historial`) por año y período, para todos los roles según sus permisos.
+- **Auditoría** ampliada a las actividades evaluables; índices nuevos para consultas frecuentes.
+
+## 10. Pendiente para fases siguientes
 
 Matrículas en línea con documentos, pagos y comprobantes, notificaciones por correo o push, aplicación móvil, reportes estadísticos avanzados, carga masiva desde Excel y almacenamiento de archivos (fotos, actas).
