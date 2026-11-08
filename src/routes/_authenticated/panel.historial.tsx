@@ -96,7 +96,7 @@ function HistoryPage() {
         <div className="space-y-8">
           {years.map((year) => (
             <section key={year}>
-              <h2 className="mb-3 font-display text-lg">Año {year}</h2>
+              <h2 className="mb-3 font-display text-lg">{year}</h2>
               <div className="grid gap-4 md:grid-cols-2">
                 {history
                   .filter((h) => h.year === year)

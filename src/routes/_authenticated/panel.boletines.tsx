@@ -79,7 +79,7 @@ function ReportCardDetail({
         </CardTitle>
         <CardDescription>
           {student.document_type ? `${student.document_type} ${student.document_number} · ` : ""}
-          Curso {course || "—"} · Año {year || "—"} · {period || "—"}
+          Curso {course || "—"} · {year || "—"} · {period || "—"}
         </CardDescription>
       </CardHeader>
       <CardContent>
